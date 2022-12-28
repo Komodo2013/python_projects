@@ -14,4 +14,5 @@ class Todoist:
             print(todoist_api.get_projects())
         except ConnectionError:
             print("Failed to connect to Todoist. Exiting")
-            exit(404)
+            self.todoist_api = False
+

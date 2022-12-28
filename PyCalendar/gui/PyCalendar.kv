@@ -1,0 +1,226 @@
+
+WindowManager:
+    id: window_manager
+    # transition: FadeTransition()
+    LoginWindow:
+    LoadingWindow:
+    PyCalendarWindow:
+
+<LoginWindow>:
+    name: "login"
+    Image:
+        source: "gui/assets/banner.png"
+        size_hint: (None, None)
+        pos: root.width/2 - 192, root.height *.6
+        size: 384, 128
+
+    TextInput:
+        id: user_input
+
+        size_hint: (None, None)
+        pos: root.width/2 - 128, root.height *.35 + 80
+        size: 256, 30
+
+        multiline: False
+        write_tab: False
+        hint_text: 'Username'
+
+        background_color: 0, 0, 0, 0
+        canvas.before:
+            Color:
+                rgba: root.box_color
+            Line:
+                width: 1
+                rectangle: user_input.pos[0], user_input.pos[1], user_input.width, user_input.height
+
+    TextInput:
+        id: pass_input
+
+        size_hint: (None, None)
+        pos: root.width/2 - 128, root.height *.35 + 40
+        size: 256, 30
+
+        multiline: False
+        write_tab: False
+        on_text_validate: root.login()
+        hint_text: 'Password'
+        password: True
+
+        background_color: 0, 0, 0, 0
+        canvas.before:
+            Color:
+                rgba: root.box_color
+            Line:
+                width: 1
+                rectangle: pass_input.pos[0], pass_input.pos[1], pass_input.width, pass_input.height
+
+    Button:
+        text: "Login"
+        size_hint: (None, None)
+        size: 128, 30
+        pos: root.width/2 - 64, root.height * .35
+        on_release: root.login()
+
+
+<LoadingWindow>:
+    name: "loading"
+
+    Image:
+        source: "gui/assets/Title.png"
+
+    ProgressBar:
+        id: progress_bar
+        size_hint: (None, None)
+        pos: root.width/2 - 256, root.width *.07
+        size: 512, 15
+        max: 100
+        value: 0
+
+        canvas.before:
+            Color:
+                rgba: root.box_color
+            Line:
+                width: 2
+                rectangle: progress_bar.pos[0]-6, progress_bar.pos[1]-3, progress_bar.width+12, progress_bar.height+6
+
+
+<PyCalendarWindow>:
+    name: "pycalendar"
+
+    FloatLayout:
+
+        BoxLayout:
+            size_hint_y: None
+            height: root.height - 30
+
+            GridLayout:
+                cols: 2
+                rows: 1
+
+
+                Splitter:
+                    size_hint: (None, None)
+                    size: 200, root.height - 30
+                    sizable_from: "right"
+                    min_size: 150
+                    max_size: 300
+
+                    strip_size: "2pt"
+
+                    GridLayout:
+                        cols: 1
+                        rows: 2
+
+                        Splitter:
+                            sizable_from: "bottom"
+                            min_size: root.height * .25
+                            max_size: root.height * .75
+
+                            strip_size: "2pt"
+
+                            ScrollView:
+                                id: mini_panel_1
+                                Label:
+                                    text: "Mini 1"
+
+                        ScrollView:
+                            id: mini_panel_2
+                            Label:
+                                text: "Mini 2"
+
+                GridLayout:
+                    cols: 1
+                    id: main_panel
+
+                    Label:
+                        text: "Main"
+
+
+        BoxLayout:
+            size_hint_y: None
+            height: 30
+            width: root.width
+
+            FloatLayout:
+                id: layout
+
+                AppMenu:
+                    id: app_menu
+                    top: root.height
+                    cancel_handler_widget: layout
+
+                    AppMenuTextItem:
+                        text: "Settings"
+                        ContextMenu:
+                            ContextMenuTextItem:
+                                text: "Settings"
+                                on_release: root._settings(0)
+                            ContextMenuDivider:
+                            ContextMenuDivider:
+                            ContextMenuTextItem:
+                                text: "Todoist Key"
+                                on_release: root._settings(1)
+                            ContextMenuTextItem:
+                                text: "Canvas Key"
+                                on_release: root._settings(2)
+                            ContextMenuTextItem:
+                                text: "Google Calendar Key"
+                                on_release: root._settings(3)
+                    AppMenuTextItem:
+                        text: "Sync"
+                        ContextMenu:
+                            ContextMenuTextItem:
+                                text: "Sync All"
+                                on_release: root._sync(0)
+                            ContextMenuDivider:
+                            ContextMenuDivider:
+                            ContextMenuTextItem:
+                                text: "Sync Todoist"
+                                on_release: root._sync(1)
+                            ContextMenuTextItem:
+                                text: "Sync Canvas"
+                                on_release: root._sync(2)
+                            ContextMenuTextItem:
+                                text: "Sync Calendar"
+                                on_release: root._sync(3)
+                    AppMenuTextItem:
+                        text: "Todoist"
+                        ContextMenu:
+                            ContextMenuTextItem:
+                                text: "Today"
+                                on_release: root._todoist(0)
+                            ContextMenuTextItem:
+                                text: "Weekly Overview"
+                                on_release: root._todoist(1)
+                            ContextMenuTextItem:
+                                text: "By Class"
+                                on_release: root._todoist(2)
+                    AppMenuTextItem:
+                        text: "Canvas"
+                        ContextMenu:
+                            ContextMenuTextItem:
+                                text: "Class Summary"
+                                on_release: root._canvas(0)
+                            ContextMenuTextItem:
+                                text: "Class Details"
+                                on_release: root._canvas(1)
+                            ContextMenuTextItem:
+                                text: "Grades"
+                                on_release: root._canvas(2)
+                            ContextMenuTextItem:
+                                text: "Minimum work"
+                                on_release: root._canvas(3)
+                            ContextMenuTextItem:
+                                text: "Assignments"
+                                on_release: root._canvas(4)
+                    AppMenuTextItem:
+                        text: "Calendar"
+                        ContextMenu:
+                            ContextMenuTextItem:
+                                text: "Today"
+                                on_release: root._calendar(0)
+                            ContextMenuTextItem:
+                                text: "Weekly"
+                                on_release: root._calendar(1)
+
+
