@@ -1,8 +1,5 @@
 import plyer
 
-import todoist
-import canvas
-import google.gtasks as tasks, google.gcalendar as gcal
 import gui
 
 gui = gui.PyCalendarApp()

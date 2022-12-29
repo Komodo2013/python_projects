@@ -128,7 +128,6 @@ class WindowManager(ScreenManager):
 
 
 class PyCalendarApp(App):
-    apis = {}
 
     def build(self):
         return kv

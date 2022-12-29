@@ -1,14 +1,8 @@
-# I need to have the following functions available: mix_columns, shift_rows, substitute, inv_substitute, key_scheduling
-# Currently done: subsboxes.subs, subsboxes.invs, hash.shift_rows, add_round_key, key_scheduler, mix_columns,
-#                 inverse_shift_columns, inverse_mix_columns, encrypt, decrypt,
-#                 encrypt_bytes, decrypt_bytes, batch_key
 import math
-import timing
 
-from galois import galois_multiply
-from subsboxes import SubsBoxes
-from hash import shift_rows, inv_shift_rows, MyHash
-from secure_random import SecureRandom
+from crypto_utils import galois_multiply, SubsBoxes
+from hash import MyHash, hash_
+from crypto_utils import shift_rows, inv_shift_rows
 from key_scheduler import KeyScheduler
 
 s = SubsBoxes()
@@ -134,21 +128,19 @@ def make_packets(bytes_in):
     return packs
 
 
-
-
-
 class Encryptor:
 
     def __init__(self, key):
         key_hash = MyHash().set_internal_matrix(key).internal_matrix
-        self.rand = SecureRandom(key_hash, is_packet=True)
+        self.rand = MyHash()
+        self.rand.internal_matrix = hash_(key_hash, 5)
 
     def get_batch_key(self):
-        combination = self.rand.hasher.internal_matrix[0][:]
-        for b in self.rand.hasher.internal_matrix[1]:
+        combination = self.rand.internal_matrix[0][:]
+        for b in self.rand.internal_matrix[1]:
             combination.append(b)
         _batch = bytearray(combination)
-        self.rand.addSalt()
+        self.rand.salt()
         return _batch
 
     def encrypt_file(self, bytes):
@@ -189,66 +181,17 @@ class Encryptor:
 
         return results
 
-"""
-e = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
-a = [[0, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]
-my_batch_key = bytearray("This should be 1", 'utf-8')
-my_batch_key2 = bytearray("This should be 1", 'utf-8')
 
-rounds = 12
-d = encrypt(e, my_batch_key, rounds)
-g = encrypt(a, my_batch_key, rounds)
-f = decrypt(d, my_batch_key, rounds)
-h = decrypt(g, my_batch_key, rounds)
-
-print(e)
-print("-"*20)
-print(d)
-print(g)
-print("-"*20)
-print(f)
-print(h)
-"""
-"""
-my_enc = Encryptor("1234")
-my_dec = Encryptor("1234")
-raw = ""
-raw_bytes = bytearray()
-print("Loading file")
-with open("random_data.txt", "rb") as file:
-    for line in file:
-        raw_bytes.extend(line)
-
-    # then change massive string into a bytearray
-
-
-    # change bytearray into packets
-print("encrypting file")
-encryption = my_enc.encrypt_file(raw_bytes)
-print("decrypting file")
-decryption = my_dec.decrypt_file(raw_bytes)
-
-print("writing encryption")
-with open('encrypted.txt', 'wb') as file:
-    file.write(encryption)
-
-print("writing decryption")
-with open('decrypted.txt', 'wb') as file:
-    file.write(decryption)
-"""
-"""
 api = "2974~Ymjt5hMUEQ5Lay30hzwKSc3o4UPnY6vjhFgz3RSRUAPiMtEWacW6wAIqYV81FX6Y"
 e = Encryptor("super secret password")
 
 f = e.encrypt_file(bytes(api, 'utf-8'))
 
-print("writing encryption")
-with open('encrypted.txt', 'wb') as file:
-    file.write(f)
+print(f)
 
 d = Encryptor("super secret password")
 
 g = d.decrypt_file(f)
 
 print(g)
-"""
+
